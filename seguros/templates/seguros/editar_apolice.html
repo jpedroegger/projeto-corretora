@@ -1,0 +1,18 @@
+{% include 'parciais/_head.html' %}
+
+{% include 'parciais/_nav.html' %}
+
+{% block 'conteudo' %}
+
+<form class="position-absolute top-50 start-50 translate-middle" method="post">
+    {% csrf_token %}
+    <table class="pd-1">    
+    {{ veiculo_form }}
+    {{ apolice_form }}
+    </table><br>
+    <button type="submit" class="btn btn-dark">Salvar</button>
+    <a class="btn btn-dark" href="{{ apolice.get_absolute_url }}">Cancelar</a>
+</form>
+
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% include 'parciais/_head.html' %}
+
+{% block conteudo %}
+{% include 'parciais/_nav.html' %}
+{% include 'parciais/_messages.html' %}
+
+<form method="GET">
+    <div class="position-relative input-group w-25 p-3">
+        <button class="btn btn-dark opacity-50" type="submit" id="">Buscar</button>
+        <input type="text" class="form-control" placeholder="" name="search" id="search">
+    </div>
+</form>
+
+<div class="m-4">
+    <table class="table">
+        <thead>
+            <tr class="fs-5">
+              <th scope="col">Nome</th>
+              <th scope="col">Telefone</th>
+              <th scope="col">Email</th>              
+              <th scope="col">Endereço</th>              
+            </tr>
+        </thead>
+        <tbody>
+            {% for segurado in segurados %}
+            <tr>
+                <td>                
+                <a href="{{ segurado.get_absolute_url }}">{{ segurado.nome }}</a>
+                </td>
+                <td>{{ segurado.telefone }}</td>
+                {% if segurado.email %}
+                <td>{{ segurado.email }}</td>
+                {% else %}
+                <td> </td>
+                {% endif %}                
+                <td>{{ segurado.endereco }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

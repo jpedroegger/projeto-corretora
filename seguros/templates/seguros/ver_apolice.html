@@ -1,0 +1,57 @@
+{% include 'parciais/_head.html' %}
+
+{% include 'parciais/_nav.html' %}
+
+{% include 'parciais/_messages.html' %}
+
+{% block 'conteudo' %}
+    <h1 class="position-relative m-3">{{ apolice.segurado.nome }}</h1>
+<div class="row">
+    <div class="col-lg-3 m-4">
+        <dl>
+            <dt class="m-1">Apólice</dt>
+            <dd class="m-1">{{ apolice.codigo }}</dd>
+
+            <dt class="m-1">Seguradora</dt>
+            <dd class="m-1">{{ apolice.get_seguradora_display }}</dd>
+
+            <dt class="m-1">Vigência</dt>
+            <dd class="m-1">{{ apolice.vigencia }}</dd>
+
+            <dt class="m-1">Prêmio</dt>
+            <dd class="m-1">R${{ apolice.premio }}</dd>
+            
+            <dt class="m-1">Comissão</dt>
+            <dd class="m-1">{{ apolice.perc_comissao }}% - R${{ apolice.total_comissao}}</dd>
+        </dl>
+    </div>
+    <div class="col-lg-3 m-4">
+        <dl>
+            <dt class="m-1">Veículo</dt>
+            <dd class="m-1">{{ apolice.veiculo.modelo }}</dd>
+
+            <dt class="m-1">Placa</dt>
+            <dd class="m-1">{{ apolice.veiculo.placa }}</dd>
+
+            <dt class="m-1">Chassi</dt>
+            <dd class="m-1">{{ apolice.veiculo.chassi }}</dd>
+
+            <dt class="m-1">Ano Modelo</dt>
+            <dd class="m-1">{{ apolice.veiculo.ano_modelo }}</dd>
+            
+            <dt class="m-1">Alienado</dt>
+            {% if apolice.veiculo.alienado %}
+            <dd class="m-1">Sim</dd>
+            {% else %}
+            <dd class="m-1">Não</dd>
+            {% endif %}
+        </dl>
+    </div>
+</div>
+    <div class="position-relative m-3">
+        <a class="btn-dark btn" href="{% url 'editar_apolice' apolice.codigo %}">Editar</a>
+        
+        <a class="btn-danger btn" href="{% url 'deletar_apolice' apolice.codigo %}">Excluir</a>
+        <a class="btn-dark btn" href="/">Voltar</a>
+    </div>
+{% endblock %}

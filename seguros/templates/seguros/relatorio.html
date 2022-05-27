@@ -1,0 +1,60 @@
+{% block conteudo %}
+{% include 'parciais/_nav.html' %}
+{% include 'parciais/_head.html' %}
+
+<div class="row">
+    <div class="col-lg-5 m-4">
+        <form method="GET" class="m-2">
+            <input type="number" min="01" max="12" step="1" value="" name="mes" placeholder="{% now 'm' %}" required/>    
+            <input type="number" min="2000" max="2050" step="1" value="" name="ano" placeholder="{% now 'Y' %}" required/>       
+            <input type="submit" value="Gerar">    
+        </form>        
+    </div>
+    {% if soma %}
+    <div class="col-lg-5 m-4">
+        <p style="margin-right: 0px; text-align: right; font-size: 20px;"><b>Total</b>: R${{soma|floatformat:2}}</p>
+    </div>
+    {% endif %}
+</div>
+
+
+
+{% if apolices %}
+<div class="m-4">
+    <table class="table">
+        <thead>
+            <tr class="fs-5">
+              <th scope="col">Nome</th>
+              <th scope="col">Telefone</th>
+              <th scope="col">Veículo</th>
+              <th scope="col">Placa</th>
+              <th scope="col">Apólice</th>
+              <th scope="col">Seguradora</th>
+              <th scope="col">Vigência</th>
+              <th scope="col">Comissão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for apolice in apolices %}
+            <tr>
+                <td>
+                
+                <a href="{{ apolice.segurado.get_absolute_url }}">{{ apolice.segurado }}</a>
+                </td>
+                <td>{{ apolice.segurado.telefone }}</td>
+                <td>{{ apolice.veiculo.modelo }}</td>
+                <td>{{ apolice.veiculo.placa }}</td>
+                <td>{{ apolice.codigo }}</td>
+                <td>{{ apolice.get_seguradora_display }}</td>
+                <td>{{ apolice.vigencia|date:'d/m/Y' }}</td>
+                <td>R${{ apolice.total_comissao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <p></p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

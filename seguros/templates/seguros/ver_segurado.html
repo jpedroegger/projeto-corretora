@@ -1,0 +1,52 @@
+{% include 'parciais/_head.html' %}
+{% include 'parciais/_nav.html' %}
+{% include 'parciais/_messages.html' %}
+
+{% block 'conteudo' %}
+    <h1 class="position-relative m-3">{{ segurado.nome }}</h1>
+<div class="row">
+    <div class="col-lg-2 m-3">
+        <dl>
+            <dt class="m-1">Data de Nascimento</dt>
+            <dd class="m-1">{{ segurado.nascimento }}</dd>
+
+            <dt class="m-1">CPF</dt>
+            <dd class="m-1">{{ segurado.cpf }}</dd>
+
+            <dt class="m-1">Estado Civil</dt>
+            <dd class="m-1">{{ segurado.get_estado_civil_display }}</dd>
+
+        </dl>
+    </div>
+    <div class="col-lg-3 m-3">
+        <dl>
+            <dt class="m-1">Telefone</dt>
+            <dd class="m-1">{{ segurado.telefone }}</dd>
+
+            <dt class="m-1">E-mail</dt>
+            <dd class="m-1">{{ segurado.email }}</dd>
+
+            <dt class="m-1">Endereço</dt>
+            <dd class="m-1">{{ segurado.endereco }}</dd>
+        </dl>
+    </div>
+    <div class="col-lg-3 m-3">
+        {% if apolices %}
+        <dl>
+            <dt style="margin: 3 3 10 37;">Apólices</dt>
+        {% for apolice in apolices %}
+            <ul class="m-1">
+               <li><a href="{{ apolice.get_absolute_url }}">{{ apolice.get_seguradora_display }} - {{ apolice.codigo }}</a></li> 
+            </ul>
+        {% endfor %}
+        </dl>
+        {% endif %}
+    </div>
+</div>
+    <div class="position-relative m-3">
+        <a class="btn-dark btn" href="{% url 'editar_segurado' segurado.id %}">Editar</a>        
+        <a class="btn-dark btn" href="{% url 'nova_apolice' segurado.id %}">Nova Apolice</a>
+        <a class="btn-danger btn" href="{% url 'deletar_segurado' segurado.id %}">Excluir</a>
+        <a class="btn-dark btn" href="/">Voltar</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <title>Title</title>
+{% include 'parciais/_head.html' %}
+<body>
+    {% include 'parciais/_nav.html' %}
+    {% include 'parciais/_messages.html' %}
+
+<form method="GET">
+    <div class="position-relative input-group w-25 p-3">
+        <button class="btn btn-dark opacity-50" type="submit" id="">Buscar</button>
+        <input type="text" class="form-control" placeholder="" name="search" id="search">
+    </div>
+</form>
+
+<div class="m-4">
+    <table class="table">
+        <thead>
+            <tr class="fs-5">
+              <th scope="col">Nome</th>
+              <th scope="col">Telefone</th>
+              <th scope="col">Veículo</th>
+              <th scope="col">Placa</th>
+              <th scope="col">Apólice</th>
+              <th scope="col">Seguradora</th>
+              <th scope="col">Premio</th>
+              <th scope="col">Comissão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for apolice in apolices %}
+            <tr>
+                <td>                
+                <a href="{{ apolice.segurado.get_absolute_url }}">{{ apolice.segurado.nome }}</a>
+                </td>
+                <td>{{ apolice.segurado.telefone }}</td>                
+                <td>{{ apolice.veiculo.modelo }}</td>
+                <td>{{ apolice.veiculo.placa }}</td>
+                <td><a href="{{ apolice.get_absolute_url }}">{{ apolice.codigo }}</a></td>
+                <td>{{ apolice.get_seguradora_display }}</td>
+                <td>R${{ apolice.premio }}</td>
+                <td>R${{ apolice.total_comissao }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
