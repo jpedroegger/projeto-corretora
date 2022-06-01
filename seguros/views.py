@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import SeguradoForm, ApoliceForm, VeiculoForm
 from django.contrib import messages
-from .models import Apolice, Segurado, Veiculo
+from .models import Apolice, Segurado
 from django.db.models import Q, Sum, F
 
 
@@ -56,19 +56,15 @@ def nova_apolice(request, pk):
             'segurado': segurado
             }
 
-    if form_veiculo.is_valid():
+    if form_veiculo.is_valid() and form_apolice.is_valid():
 
-        if form_apolice.is_valid():
-
-            veiculo = form_veiculo.save()
-            apolice = form_apolice.save(commit=False)
-            apolice.veiculo = veiculo
-            apolice.segurado = segurado
-            apolice.save()
-            criado = messages.success(request, 'Cadastro efetuado.')
-            return redirect('/', criado)    
-        
-        return render(request, 'seguros/nova_apolice.html', contexto)
+        veiculo = form_veiculo.save()
+        apolice = form_apolice.save(commit=False)
+        apolice.veiculo = veiculo
+        apolice.segurado = segurado
+        apolice.save()
+        criado = messages.success(request, 'Cadastro efetuado.')
+        return redirect('/', criado)            
     return render(request, 'seguros/nova_apolice.html', contexto)
 
 
@@ -109,17 +105,23 @@ def editar_apolice(request, pk):
     apolice = get_object_or_404(Apolice, codigo=pk)        
 
     apolice_form = ApoliceForm(instance=apolice)
-    veiculo_form = VeiculoForm(instance=apolice.veiculo)
-    #TODO: Padronizar nome de forms
+    veiculo_form = VeiculoForm(instance=apolice.veiculo)    
+    
     contexto = {'apolice_form': apolice_form,
                 'veiculo_form': veiculo_form,
-                'apolice': apolice}
+                'apolice': apolice}   
 
     if request.method == 'POST':
         data = request.POST
 
         apolice_form = ApoliceForm(data=data, instance=apolice)
+
         if apolice_form.is_valid():
+            apolice_codigo = apolice_form.cleaned_data['codigo']
+
+            if apolice_codigo != pk:
+                erro = messages.error(request, 'Não é possível alterar o código da apólice.')
+                return render(request, 'seguros/editar_apolice.html', contexto, erro)
 
             veiculo_form = VeiculoForm(data=data, instance=apolice.veiculo)
             if veiculo_form.is_valid():
@@ -164,7 +166,7 @@ def deletar_segurado(request, pk):
 
     segurado = get_object_or_404(Segurado, id=pk)    
     segurado.delete()
-    excluido = messages.success(request, 'Contato excluído com sucesso.')
+    excluido = messages.success(request, 'Segurado excluído com sucesso.')
     return redirect('/', excluido)
 
 
@@ -172,7 +174,7 @@ def deletar_apolice(request, pk):
 
     apolice = get_object_or_404(Apolice, codigo=pk)    
     apolice.delete()
-    excluido = messages.success(request, 'Contato excluído com sucesso.')
+    excluido = messages.success(request, 'Apólice excluída com sucesso.')
     return redirect('/', excluido)
 
 

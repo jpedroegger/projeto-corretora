@@ -1,8 +1,8 @@
 {% include 'parciais/_head.html' %}
-
 {% include 'parciais/_nav.html' %}
 
 {% block 'conteudo' %}
+{% include 'parciais/_messages.html' %}
 
 <form class="position-absolute top-50 start-50 translate-middle" method="post">
     {% csrf_token %}
