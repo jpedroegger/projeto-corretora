@@ -30,8 +30,17 @@ class IndexViewTest(TestCase):
             veiculo = veiculo,
             codigo = 'TesteCodigo',
             seguradora = 'BR',
-            vigencia = '2000-01-01',
+            vigencia = '2022-04-01',
             premio = 2000.00,
+            perc_comissao = 10,            
+        )
+        Apolice.objects.create(
+            segurado = segurado,
+            veiculo = veiculo,
+            codigo = 'TesteBusca',
+            seguradora = 'AZ',
+            vigencia = '2022-01-01',
+            premio = 1000.00,
             perc_comissao = 10,            
         ) 
 
@@ -41,17 +50,28 @@ class IndexViewTest(TestCase):
     
     def test_view_index_render_template_correto(self):
         response = self.client.get(self.url)
+        
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'seguros/index.html')
 
     def test_view_index_contexto_correto(self):
-        apolice = Apolice.objects.get(codigo='TesteCodigo') 
+        apolice = Apolice.objects.order_by('codigo')
         response = self.client.get(self.url)        
+        
         self.assertEqual(response.status_code, 200)        
         self.assertQuerysetEqual(
             response.context['apolices'],
-            [apolice],
-        )
+            apolice
+        )        
+
+    def test_busca_returns_searched_object(self):            
+        response = self.client.get('/?search=busca')
+        apolice = Apolice.objects.get(codigo='TesteCodigo') 
+        busca_apolice = Apolice.objects.get(codigo='TesteBusca') 
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(apolice, response.context['apolices'])
+        self.assertIn(busca_apolice, response.context['apolices'])        
 
 
 class ListaSeguradosViewTest(TestCase):
@@ -66,6 +86,15 @@ class ListaSeguradosViewTest(TestCase):
             endereco = 'TesteEndereço',
             estado_civil = 'NI'
         ) 
+        Segurado.objects.create(
+            id=2,
+            nome = 'SeguradoBusca',
+            nascimento = '2000-01-01',
+            telefone = 'TesteTelefone',            
+            cpf = 'TesteCPF',
+            endereco = 'TesteEndereço',
+            estado_civil = 'NI'
+        ) 
         
         self.client = Client()
         self.url = reverse('lista_segurados')
@@ -73,17 +102,28 @@ class ListaSeguradosViewTest(TestCase):
 
     def test_view_lista_segurados_render_template_correto(self):
         response = self.client.get(self.url)
+        
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'seguros/lista_segurados.html')
 
     def test_view_lista_segurados_contexto_correto(self):
-        segurado = Segurado.objects.get(id=1) 
+        segurado = Segurado.objects.order_by('nome')
         response = self.client.get(self.url)        
+        
         self.assertEqual(response.status_code, 200)        
         self.assertQuerysetEqual(
             response.context['segurados'],
-            [segurado],
+            segurado,
         )
+        
+    def test_busca_returns_searched_object(self):            
+        response = self.client.get('/lista_segurados/?search=busca')
+        segurado = Segurado.objects.get(id=1) 
+        busca_segurado = Segurado.objects.get(id=2) 
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(busca_segurado, response.context['segurados'])
+        self.assertNotIn(segurado, response.context['segurados']) 
 
 
 class NovaApoliceViewTest(TestCase):
@@ -559,7 +599,7 @@ class DeletarSeguradoViewTest(TestCase):
         self.assertEqual(str(message[0]), 'Segurado excluído com sucesso.')        
 
 
-class DeletarSeguradoViewTest(TestCase):
+class DeletarApoliceViewTest(TestCase):
     
     def setUp(self):
 
@@ -655,8 +695,7 @@ class RelatorioViewTest(TestCase):
             premio = 1000.00,
             perc_comissao = 15,            
         )
-
-        #self.client = Client()
+        
         self.url = reverse('relatorio')
 
         return super().setUp()
