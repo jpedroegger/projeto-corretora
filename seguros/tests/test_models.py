@@ -23,7 +23,7 @@ class ModelSeguradoTest(TestCase):
     
     def test_absolute_url_model_segurado(self):
         segurado = Segurado.objects.get(id=1)
-        self.assertEquals(segurado.get_absolute_url(), '/segurado/1')
+        self.assertEqual(segurado.get_absolute_url(), '/segurado/1')
 
 
 class ModelVeiculoTest(TestCase):
@@ -88,7 +88,7 @@ class ModelApoliceTest(TestCase):
         
     def test_absolute_url_model_apolice(self):
         apolice = Apolice.objects.get(codigo='TesteCodigo') 
-        self.assertEquals(apolice.get_absolute_url(), f"/apolice/{apolice.codigo}")
+        self.assertEqual(apolice.get_absolute_url(), f"/apolice/{apolice.codigo}")
 
     def test_property_total_comissao_apolice(self):
         apolice = Apolice.objects.get(codigo='TesteCodigo')         
