@@ -80,7 +80,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt-BR'
 
-TIME_ZONE = 'Portugal'
+TIME_ZONE = 'Europe/Lisbon'
 
 USE_I18N = True
 
