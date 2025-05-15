@@ -3,20 +3,24 @@ from .forms import SeguradoForm, ApoliceForm, VeiculoForm
 from django.contrib import messages
 from .models import Apolice, Segurado
 from django.db.models import Q, Sum, F
+from django.views.generic import ListView
 
 
-def index(request):
-    
-    apolices = Apolice.objects.order_by('codigo')        
-    
-    busca = request.GET.get('search')
-    if busca:
-        apolices = Apolice.objects.filter(
-            Q(segurado__nome__icontains=busca) |
-            Q(codigo__icontains=busca)
+class ApoliceListView(ListView):
+    model = Apolice
+    template_name = 'seguros/index.html'
+    context_object_name = "apolices"
+
+    def get_queryset(self, **kwargs):
+        queryset = super().get_queryset(**kwargs)
+        busca = self.request.GET.get('search')
+        if busca:
+            queryset = queryset.filter(
+                Q(segurado__nome__icontains=busca) |
+                Q(codigo__icontains=busca)
             )
+        return queryset
 
-    return render(request, 'seguros/index.html', {'apolices': apolices })
 
 
 def lista_segurados(request):

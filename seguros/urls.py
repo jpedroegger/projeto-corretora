@@ -1,9 +1,11 @@
 from django.urls import path
 from . import views
+from .views import ApoliceListView
 
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', ApoliceListView.as_view(), name='index'),
+    
     path('lista_segurados/', views.lista_segurados, name='lista_segurados'),
 
     path('nova_apolice/<int:pk>', views.nova_apolice, name='nova_apolice'),
