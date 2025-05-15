@@ -2,22 +2,41 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import SeguradoForm, ApoliceForm, VeiculoForm
 from django.contrib import messages
 from .models import Apolice, Segurado
-from django.db.models import Q, Sum, F
+from django.db.models import Q, Sum, F, QuerySet
 from django.views.generic import ListView
+from typing import Any, Dict, Optional
 
 
 class ApoliceListView(ListView):
+    """
+    A view that lists all Apolice instances with optional search functionality.
+    
+    Inherits from Django's ListView to display paginated results. Supports filtering
+    by segurado's name or apolice code via URL query parameter (`?search=...`).
+
+    Attributes:
+        model: The model class (Apolice).
+        template_name: Path to the template rendering the list.
+        context_object_name: Variable name for the queryset in the template.
+    """
     model = Apolice
     template_name = 'seguros/index.html'
     context_object_name = "apolices"
 
-    def get_queryset(self, **kwargs):
+    def get_queryset(self, **kwargs: Any) -> QuerySet[Apolice]:
+        """
+        Filters queryset based on URL search parameter.
+            
+        Returns:
+            QuerySet filtered by:
+            - segurado__nome (partial match)
+            - codigo (partial match)
+        """
         queryset = super().get_queryset(**kwargs)
-        busca = self.request.GET.get('search')
-        if busca:
+        if search_term := self.request.GET.get('search'):
             queryset = queryset.filter(
-                Q(segurado__nome__icontains=busca) |
-                Q(codigo__icontains=busca)
+                Q(segurado__nome__icontains=search_term) |
+                Q(codigo__icontains=search_term)
             )
         return queryset
 
