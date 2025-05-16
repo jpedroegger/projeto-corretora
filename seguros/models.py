@@ -50,8 +50,8 @@ class Veiculo(models.Model):
 
 
 class Apolice(models.Model):
-    segurado = models.ForeignKey(Segurado, on_delete=models.CASCADE)
-    veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE)
+    segurado = models.ForeignKey(Segurado, on_delete=models.CASCADE, related_name='apolices')
+    veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE, related_name='apolices')
     codigo = models.CharField('Código', max_length=25, primary_key=True)
     seguradora = models.CharField(max_length=2, choices=SEGURADORAS)
     vigencia = models.DateField('Vigência')
