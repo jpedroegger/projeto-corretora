@@ -3,7 +3,7 @@ from .forms import SeguradoForm, ApoliceForm, VeiculoForm
 from django.contrib import messages
 from .models import Apolice, Segurado
 from django.db.models import Q, Sum, F, QuerySet
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView, DeleteView
 from typing import Any, Dict, Optional
 from django.urls import reverse_lazy
 
@@ -118,6 +118,20 @@ class ClientCreateView(CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Novo segurado cadastrado.')
         return response
+
+
+class ClientDetailView(DetailView):
+    model = Segurado
+    template_name = 'seguros/ver_segurado.html'
+
+    def get_queryset(self):
+        return Segurado.objects.prefetch_related('apolices')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        segurado = self.object
+        context['apolices'] = segurado.apolices.all()
+        return context
 
 
 def ver_apolice(request, pk):
