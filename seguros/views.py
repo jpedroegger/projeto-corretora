@@ -41,16 +41,32 @@ class ApoliceListView(ListView):
         return queryset
 
 
+class ClientListView(ListView):
+    """
+    A view that lists all Clients instances with optional search functionality.
 
-def lista_segurados(request):
-    
-    segurados = Segurado.objects.order_by('nome')
-    
-    busca = request.GET.get('search')
-    if busca:
-        segurados = Segurado.objects.filter(nome__icontains=busca)
+    Inherits from Django's ListView to display paginated results. Supports filtering
+    by clients's name via URL query parameter (`?search=...`).
+    """
+    model = Segurado
+    template_name = "seguros/lista_segurados.html"
+    context_object_name = "segurados"
+    ordering = ["nome"]
 
-    return render(request, 'seguros/lista_segurados.html', {'segurados': segurados })
+    def get_queryset(self, **kwargs: Any) -> QuerySet[Segurado]:
+        """
+        Filters queryset based on URL search parameter.
+            
+        Returns:
+            QuerySet filtered by:
+            - nome (partial match)
+        """
+        queryset = super().get_queryset(**kwargs)
+        if search_term := self.request.GET.get('search'):
+            queryset = queryset.filter(
+                nome__icontains=search_term
+            ).order_by('nome')
+        return queryset
 
 
 def nova_apolice(request, pk):    
