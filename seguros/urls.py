@@ -1,15 +1,15 @@
 from django.urls import path
 from . import views
-from .views import ApoliceListView, ClientListView
+from .views import ApoliceListView, ClientListView, ClientCreateView
 
 
 urlpatterns = [
     path('', ApoliceListView.as_view(), name='index'),
     
     path('clients/', ClientListView.as_view(), name='clients_list'),
+    path('clients/new', ClientCreateView.as_view(), name='clients_create'),
 
     path('nova_apolice/<int:pk>', views.nova_apolice, name='nova_apolice'),
-    path('novo_segurado/', views.novo_segurado, name='novo_segurado'),
 
     path('apolice/<str:pk>', views.ver_apolice, name='ver_apolice'),
     path('segurado/<int:pk>', views.ver_segurado, name='ver_segurado'),

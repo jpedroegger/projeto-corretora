@@ -3,8 +3,9 @@ from .forms import SeguradoForm, ApoliceForm, VeiculoForm
 from django.contrib import messages
 from .models import Apolice, Segurado
 from django.db.models import Q, Sum, F, QuerySet
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 from typing import Any, Dict, Optional
+from django.urls import reverse_lazy
 
 
 class ApoliceListView(ListView):
@@ -107,22 +108,16 @@ def nova_apolice(request, pk):
     return render(request, 'seguros/nova_apolice.html', contexto)
 
 
-def novo_segurado(request):    
+class ClientCreateView(CreateView):
+    model = Segurado
+    form_class = SeguradoForm
+    template_name = 'seguros/novo_segurado.html'
+    success_url = reverse_lazy('clients_create')
 
-    if request.method != 'POST':
-        segurado_form = SeguradoForm()
-
-        return render(request, 'seguros/novo_segurado.html', {'segurado_form': segurado_form})
-    
-    segurado_form = SeguradoForm(request.POST)
-
-    if segurado_form.is_valid():
-        segurado_form.save()
-
-        criado = messages.success(request, 'Novo segurado cadastrado.')
-        return redirect('/lista_segurados', criado)    
-    
-    return render(request, 'seguros/novo_segurado.html', {'segurado_form': segurado_form})
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Novo segurado cadastrado.')
+        return response
 
 
 def ver_apolice(request, pk):
